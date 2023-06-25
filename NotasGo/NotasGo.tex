@@ -680,6 +680,200 @@ func main() {
 
 }
 \end{verbatim}
+\newpage
+\section{Crear un modulo-Proyecto}
+1.mkdir greetings \\
+2.cd greetings/  \\
+3.go mod init github.com/Bryan-Ricardo/greetings //Creando el manejador de modulos \\
+4.nvim greetings.go //Creando un archivo .go \\
+5.Escribir lo siguiente: \\
+\begin{verbatim}
+package greetings
 
+import "fmt"
+
+//Hello
+
+func Hello(name string) string {
+	message := fmt.Sprintf("¡Hola, %v! ¡Bienvenido!", name)
+	return message
+}
+
+\end{verbatim}
+
+6.Salir del documento \\
+7.Ejecutar cd .. \\para salir de la carpeta \\
+8.mkdir hello \\ 
+9.cd hello \\
+10.go mod init hello \\
+11.nvim main.go \\
+12. Escribir lo siguiente 
+\begin{verbatim}
+package main
+import (
+	"fmt"
+
+	"github.com/Bryan-Ricardo/greetings"
+)
+
+func main() {
+	message := greetings.Hello("Bryan")
+	fmt.Println("vim-go")
+}
+
+\end{verbatim}
+
+13.Salir del documento \\ 
+14.go mod edit -replace github.com/Bryan-Ricardo/greetings=../greetings\\
+15.go mod tidy // Guardar los cambios \\
+16.go run //Ejecutar el programa
+
+\newpage
+
+\subsection{Agregar un manejador de errores}
+1.En el archivo greetings: 
+
+\begin{verbatim}
+package greetings
+
+import (
+	"errors"
+	"fmt"
+)
+
+//Hello
+func Hello(name string) (string, error) {
+
+	if name == "" {
+		return "", errors.New("Nombre vacío")
+	}
+
+	message := fmt.Sprintf("¡Hola, %v! ¡Bienvenido!", name)
+	return message, nil
+}
+\end{verbatim}
+
+2.En el archivo hello: 
+
+\begin{verbatim}
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/Bryan-Ricardo/greetings"
+)
+
+func main() {
+	log.SetPrefix("greetings: ")
+	log.SetFlags(0)
+
+	message, err := greetings.Hello("")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(message)
+}
+\end{verbatim}
+
+\newpage
+\subsection{Devolver un saludo aleatorio}
+1.Escribir lo siguiente en greetings
+\begin{verbatim}
+package greetings
+
+import (
+	"errors"
+	"fmt"
+	"math/rand"
+)
+
+//Hello
+
+func Hello(name string) (string, error) {
+
+	if name == "" {
+		return "", errors.New("Nombre vacío")
+	}
+
+	message := fmt.Sprintf(randomFormat(), name)
+	return message, nil
+}
+
+func randomFormat() string {
+
+	formats := []string{
+		"¡Hola, %v! ¡Bienvenido",
+		"¡Qué bueno verte, %v!",
+		"¡Saludo, %v! ¡Encantado de conocerte!",
+	}
+
+	return formats[rand.Intn(len(formats))]
+
+}
+\end{verbatim}
+\newpage
+\section{POO e Interfaces }
+\subsection{Estructuras y metodos}
+1.mkdir library \\
+2.go mod init library \\
+3.nvim main \\
+4.mkdir book \\
+5.cd book \\
+6.nvim book \\
+7.Escribir en book lo siguiente: 
+\begin{verbatim}
+package book
+
+import "fmt"
+
+type Book struct {
+	Title  string
+	Author string
+	Pages  int
+}
+
+// Creando el "Constructor"
+func NewBook(title string, author string, pages int) *Book {
+
+	return &Book{
+		Title:  title,
+		Author: author,
+		Pages:  pages,
+	}
+
+}
+
+func (b *Book) PrintInfo() {
+
+	fmt.Printf(" Title: %s\n Author: %s \n Pages: %d \n", b.Title, b.Author, b.Pages)
+
+}
+\end{verbatim}
+8.Escribir en main lo siguiente: 
+\begin{verbatim}
+    package main
+
+import (
+	"library/book"
+)
+
+func main() {
+	/*
+		Primera forma sin el contructor
+		var myBook = book.Book{
+			Title:  "Mody Dick",
+			Author: "Herman Melville",
+			Pages:  300,
+		}
+
+		myBook.PrintInfo()
+	*/
+	//SEGUNDA FORMA CON EL CONSTRUCTOR
+	myBook := book.NewBook("Mody Dick", "Herman Melville", 300)
+	myBook.PrintInfo()
+}
+\end{verbatim}
 
 \end{document}
